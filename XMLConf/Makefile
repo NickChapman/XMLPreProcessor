@@ -16,8 +16,14 @@ all: libxmlpreprocessor.so libxmlpreprocessor.a
 %.o: %.cpp %.h
 	$(CC) -o $@ -c $< $(CFLAGS) $(INC) 
 	
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S), Darwin)
+libxmlpreprocessor.so: $(OBJ)
+	$(CC) $(SOFLAGS) -Wl,-install_name,$@ -o $@ $^ $(CFLAGS) $(LIB)
+else
 libxmlpreprocessor.so: $(OBJ)
 	$(CC) $(SOFLAGS) -Wl,-soname,$@ -o $@ $^ $(CFLAGS) $(LIB)
+endif
 
 libxmlpreprocessor.a: $(OBJ)
 	ar rvs $@ $^
